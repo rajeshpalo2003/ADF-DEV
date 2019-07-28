@@ -1,0 +1,30 @@
+{
+	"name": "dynamic_file_Conn",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dynamicLinkservice",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('First_',formatDateTime(utcnow(),'yyyy'),'_', formatDateTime(utcnow(),'MM'),'_',formatDateTime(utcnow(),'dd'),'.csv')",
+					"type": "Expression"
+				},
+				"container": "sbressmessage"
+			},
+			"columnDelimiter": ";",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

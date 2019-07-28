@@ -1,0 +1,22 @@
+{
+	"name": "Vw_Customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Onprem_Advwork_Source_Conn",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[Vw_Customer]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
