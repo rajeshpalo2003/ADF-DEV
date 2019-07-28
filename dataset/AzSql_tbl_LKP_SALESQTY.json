@@ -1,0 +1,16 @@
+{
+	"name": "AzSql_tbl_LKP_SALESQTY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzSqlBallEdw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "[dbo].[tbl_LKP_SALESQTY]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

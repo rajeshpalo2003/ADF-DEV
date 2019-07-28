@@ -1,0 +1,19 @@
+{
+	"name": "Dest_AzureBlob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Dest_Conn_OnpermSQL_Blob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "OrcFormat"
+			},
+			"fileName": "",
+			"folderPath": "sbressmessage"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,16 @@
+{
+	"name": "Onprem_Advwork_Source_Conn",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=False;data source=RAJESH;initial catalog=AdventureWorks2012;user id=sa",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5ODVhYTEyMi0wOTQwLTRkZjEtYmM3Yi02MzlhZWEwZGQ1M2UiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SelfhostedintegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
