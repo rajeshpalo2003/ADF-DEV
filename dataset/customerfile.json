@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "customerfile.txt",
+				"fileName": "customerfile.csv",
 				"container": "sbressmessage"
 			},
 			"columnDelimiter": ",",
