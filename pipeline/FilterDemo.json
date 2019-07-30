@@ -72,7 +72,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('\nSELECT  [CustomerID],[FirstName],[MiddleName],[LastName],[CompanyName],[EmailAddress],[Phone]      \nFROM [SalesLT].[Customer] where CustomerID= ' ,activity('Filter1').output.value[0].CustomerID)",
+							"value": "@concat('\nSELECT  [CustomerID],[FirstName],[MiddleName],[LastName],[CompanyName],[EmailAddress],[Phone]      \nFROM [SalesLT].[Customer] where CompanyName=''',activity('Filter1').output.value[0].CompanyName,'''')",
 							"type": "Expression"
 						}
 					},
