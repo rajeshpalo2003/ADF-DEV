@@ -1,0 +1,167 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "ADF-INDCENTL-POC-BLOBTOSQL"
+		},
+		"AzAdvDBConn_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzAdvDBConn'"
+		},
+		"AzBlobFirstFile_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzBlobFirstFile'"
+		},
+		"AzSqlBallEdw_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzSqlBallEdw'"
+		},
+		"AzureBlobCsvfileOnly_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobCsvfileOnly'"
+		},
+		"AzureBlobDeltaFileName_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobDeltaFileName'"
+		},
+		"AzureBlobfailedload_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobfailedload'"
+		},
+		"Connect_OnPremAdvDW_ToBlob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
+		},
+		"Dest_Conn_OnpermSQL_Blob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Dest_Conn_OnpermSQL_Blob'"
+		},
+		"Onprem_Advwork_Source_Conn_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Onprem_Advwork_Source_Conn'"
+		},
+		"Onprem_Test_Source_Conn_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Onprem_Test_Source_Conn'"
+		},
+		"dynamicLinkservice_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
+		},
+		"Dest_AzureBlob_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"Dest_AzureBlob_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "sbressmessage"
+		},
+		"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "sbressmessage"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas Token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzAdvDBConn_connectionString": {
+						"value": "[parameters('AzAdvDBConn_connectionString')]"
+					},
+					"AzBlobFirstFile_connectionString": {
+						"value": "[parameters('AzBlobFirstFile_connectionString')]"
+					},
+					"AzSqlBallEdw_connectionString": {
+						"value": "[parameters('AzSqlBallEdw_connectionString')]"
+					},
+					"AzureBlobCsvfileOnly_connectionString": {
+						"value": "[parameters('AzureBlobCsvfileOnly_connectionString')]"
+					},
+					"AzureBlobDeltaFileName_connectionString": {
+						"value": "[parameters('AzureBlobDeltaFileName_connectionString')]"
+					},
+					"AzureBlobfailedload_connectionString": {
+						"value": "[parameters('AzureBlobfailedload_connectionString')]"
+					},
+					"dynamicLinkservice_connectionString": {
+						"value": "[parameters('dynamicLinkservice_connectionString')]"
+					},
+					"Connect_OnPremAdvDW_ToBlob_connectionString": {
+						"value": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
+					},
+					"Dest_Conn_OnpermSQL_Blob_connectionString": {
+						"value": "[parameters('Dest_Conn_OnpermSQL_Blob_connectionString')]"
+					},
+					"Onprem_Advwork_Source_Conn_connectionString": {
+						"value": "[parameters('Onprem_Advwork_Source_Conn_connectionString')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Onprem_Test_Source_Conn_connectionString": {
+						"value": "[parameters('Onprem_Test_Source_Conn_connectionString')]"
+					},
+					"Dest_AzureBlob_properties_typeProperties_fileName": {
+						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_fileName')]"
+					},
+					"Dest_AzureBlob_properties_typeProperties_folderPath": {
+						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_folderPath')]"
+					},
+					"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
+						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_fileName')]"
+					},
+					"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
+						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
+		}
+	]
+}

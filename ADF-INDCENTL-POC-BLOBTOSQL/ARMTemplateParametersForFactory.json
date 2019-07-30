@@ -1,0 +1,54 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADF-INDCENTL-POC-BLOBTOSQL"
+		},
+		"AzAdvDBConn_connectionString": {
+			"value": ""
+		},
+		"AzBlobFirstFile_connectionString": {
+			"value": ""
+		},
+		"AzSqlBallEdw_connectionString": {
+			"value": ""
+		},
+		"AzureBlobCsvfileOnly_connectionString": {
+			"value": ""
+		},
+		"AzureBlobDeltaFileName_connectionString": {
+			"value": ""
+		},
+		"AzureBlobfailedload_connectionString": {
+			"value": ""
+		},
+		"Connect_OnPremAdvDW_ToBlob_connectionString": {
+			"value": ""
+		},
+		"Dest_Conn_OnpermSQL_Blob_connectionString": {
+			"value": ""
+		},
+		"Onprem_Advwork_Source_Conn_connectionString": {
+			"value": ""
+		},
+		"Onprem_Test_Source_Conn_connectionString": {
+			"value": ""
+		},
+		"dynamicLinkservice_connectionString": {
+			"value": ""
+		},
+		"Dest_AzureBlob_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"Dest_AzureBlob_properties_typeProperties_folderPath": {
+			"value": "sbressmessage"
+		},
+		"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
+			"value": "sbressmessage"
+		}
+	}
+}
