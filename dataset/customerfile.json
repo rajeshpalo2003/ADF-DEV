@@ -14,28 +14,36 @@
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
-			"quoteChar": "\""
+			"firstRowAsHeader": true,
+			"quoteChar": ""
 		},
 		"schema": [
 			{
+				"name": "CustomerID",
 				"type": "String"
 			},
 			{
+				"name": "FirstName",
 				"type": "String"
 			},
 			{
+				"name": "MiddleName",
 				"type": "String"
 			},
 			{
+				"name": "LastName",
 				"type": "String"
 			},
 			{
+				"name": "CompanyName",
 				"type": "String"
 			},
 			{
+				"name": "EmailAddress",
 				"type": "String"
 			},
 			{
+				"name": "Phone",
 				"type": "String"
 			}
 		]
