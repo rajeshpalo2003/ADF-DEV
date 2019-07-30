@@ -1,0 +1,108 @@
+{
+	"name": "FilterDemo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT  [CustomerID]      \n      ,[FirstName]\n      ,[MiddleName]\n      ,[LastName]   \n      ,[CompanyName]\n      ,[EmailAddress]\n      ,[Phone]      \n  FROM [SalesLT].[Customer]"
+					},
+					"dataset": {
+						"referenceName": "AZADV_Customer",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().CompanyName,'Catalog Store')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy Data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@concat('\nSELECT  [CustomerID],[FirstName],[MiddleName],[LastName],[CompanyName],[EmailAddress],[Phone]      \nFROM [SalesLT].[Customer] where CompanyName=''',activity('Filter1').output.value[0].CompanyName,'''')",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSetting"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSetting",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AZADV_Customer",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "customerfile",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

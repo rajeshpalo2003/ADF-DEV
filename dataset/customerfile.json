@@ -1,0 +1,52 @@
+{
+	"name": "customerfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzBlobFirstFile",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "customerfile.csv",
+				"container": "sbressmessage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": ""
+		},
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "MiddleName",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "CompanyName",
+				"type": "String"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			}
+		]
+	}
+}
