@@ -11,6 +11,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "ProdDtls.csv",
+				"folderPath": "DFTOutput",
 				"container": "successload"
 			},
 			"columnDelimiter": ",",
