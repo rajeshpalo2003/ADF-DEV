@@ -9,14 +9,14 @@
 						"referenceName": "AzAdv",
 						"type": "DatasetReference"
 					},
-					"name": "SORPRODCAT"
+					"name": "SORPROD"
 				},
 				{
 					"dataset": {
 						"referenceName": "AzAdv",
 						"type": "DatasetReference"
 					},
-					"name": "SORPRODUCT"
+					"name": "SORPRODCAT"
 				}
 			],
 			"sinks": [
@@ -36,7 +36,7 @@
 					"name": "Select1"
 				}
 			],
-			"script": "\n\nsource(output(\n\t\tProductCategoryID as integer,\n\t\tName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 10,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductCategoryID]      \\n      ,[Name]     \\n  FROM [SalesLT].[ProductCategory]',\n\tformat: 'query') ~> SORPRODCAT\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductID]\\n      ,[Name]\\n      ,[Color]\\n      ,[StandardCost]\\n      ,[ListPrice]\\n      ,[Size]\\n      ,[Weight]\\n      ,[ProductCategoryID]  \\n FROM [SalesLT].[Product]',\n\tformat: 'query') ~> SORPRODUCT\nSORPRODCAT, SORPRODUCT join(SORPRODCAT@ProductCategoryID == SORPRODUCT@ProductCategoryID,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> Join1\nJoin1 select(mapColumn(\n\t\tCatName = SORPRODCAT@Name,\n\t\tProdName = SORPRODUCT@Name,\n\t\tListPrice,\n\t\tSize,\n\t\tWeight\n\t)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
+			"script": "\n\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductID]\\n      ,[Name]\\n      ,[Color]\\n      ,[StandardCost]\\n      ,[ListPrice]\\n      ,[Size]\\n      ,[Weight]\\n      ,[ProductCategoryID]  \\n FROM [SalesLT].[Product]',\n\tformat: 'query') ~> SORPROD\nsource(output(\n\t\tProductCategoryID as integer,\n\t\tParentProductCategoryID as integer,\n\t\tName as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SORPRODCAT\nSORPROD, SORPRODCAT join(SORPROD@ProductCategoryID == SORPRODCAT@ProductCategoryID,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> Join1\nJoin1 select(mapColumn(\n\t\tCatName = SORPRODCAT@Name,\n\t\tProdName = SORPROD@Name,\n\t\tColor,\n\t\tStandardCost,\n\t\tListPrice\n\t),\n\tpartitionBy('hash', 1)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DFTOutput.txt'],\n\tpartitionBy('hash', 1)) ~> sink1"
 		}
 	}
 }
