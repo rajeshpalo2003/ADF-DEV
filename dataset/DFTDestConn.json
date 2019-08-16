@@ -1,0 +1,22 @@
+{
+	"name": "DFTDestConn",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzBlobFirstFile",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ProdDtls.csv",
+				"container": "successload"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
