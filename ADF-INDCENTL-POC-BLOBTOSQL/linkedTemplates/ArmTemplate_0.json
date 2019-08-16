@@ -39,13 +39,16 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
 		},
-		"Dest_Conn_OnpermSQL_Blob_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Dest_Conn_OnpermSQL_Blob'"
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "db-seast-poc-balledw.database.windows.net"
 		},
-		"Onprem_Advwork_Source_Conn_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Onprem_Advwork_Source_Conn'"
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "rpalo"
+		},
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
 		}
 	},
 	"variables": {
@@ -139,6 +142,37 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('dynamicLinkservice_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SSISintegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "SSIS Lift and Shift",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "Central India",
+						"nodeSize": "Standard_D2_v3",
+						"numberOfNodes": 1,
+						"maxParallelExecutionsPerNode": 1
+					},
+					"ssisProperties": {
+						"catalogInfo": {
+							"catalogServerEndpoint": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]",
+							"catalogAdminUserName": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]",
+							"catalogAdminPassword": {
+								"type": "SecureString",
+								"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+							},
+							"catalogPricingTier": "Basic"
+						},
+						"edition": "Standard",
+						"licenseType": "LicenseIncluded"
+					}
 				}
 			},
 			"dependsOn": []
@@ -559,6 +593,63 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/customerfile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzBlobFirstFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "customerfile.csv",
+						"container": "sbressmessage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "MiddleName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "CompanyName",
+						"type": "String"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "String"
+					},
+					{
+						"name": "Phone",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dynamic_file_Conn')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -601,44 +692,6 @@
 				"type": "SqlServer",
 				"typeProperties": {
 					"connectionString": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "SelfhostedintegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SelfhostedintegrationRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dest_Conn_OnpermSQL_Blob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('Dest_Conn_OnpermSQL_Blob_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "SelfhostedintegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SelfhostedintegrationRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Onprem_Advwork_Source_Conn')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('Onprem_Advwork_Source_Conn_connectionString')]"
 				},
 				"connectVia": {
 					"referenceName": "SelfhostedintegrationRuntime",

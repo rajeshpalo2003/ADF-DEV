@@ -50,6 +50,15 @@
 		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
 			"value": "sbressmessage"
 		},
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "db-seast-poc-balledw.database.windows.net"
+		},
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "rpalo"
+		},
+		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},
