@@ -126,9 +126,6 @@
 					"dynamicLinkservice_connectionString": {
 						"value": "[parameters('dynamicLinkservice_connectionString')]"
 					},
-					"Connect_OnPremAdvDW_ToBlob_connectionString": {
-						"value": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
-					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
 					},
@@ -155,6 +152,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Connect_OnPremAdvDW_ToBlob_connectionString": {
+						"value": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
 					},
 					"Dest_Conn_OnpermSQL_Blob_connectionString": {
 						"value": "[parameters('Dest_Conn_OnpermSQL_Blob_connectionString')]"

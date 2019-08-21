@@ -35,10 +35,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
-		"Connect_OnPremAdvDW_ToBlob_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
-		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
 			"defaultValue": "db-seast-poc-balledw.database.windows.net"
@@ -272,6 +268,52 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzAdv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzAdvDBConn",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductCategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ParentProductCategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "ProductCategory"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzSql_tbl_LKP_SALESQTY')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -289,6 +331,33 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzSqlBallEdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFTDestConn')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzBlobFirstFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "DFTOutput",
+						"container": "successload"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
 			]
 		},
 		{
@@ -647,59 +716,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dynamic_file_Conn')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dynamicLinkservice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat('First_',formatDateTime(utcnow(),'yyyy'),'_', formatDateTime(utcnow(),'MM'),'_',formatDateTime(utcnow(),'dd'),'.csv')",
-							"type": "Expression"
-						},
-						"container": "sbressmessage"
-					},
-					"columnDelimiter": ";",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dynamicLinkservice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Connect_OnPremAdvDW_ToBlob')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "SelfhostedintegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SelfhostedintegrationRuntime')]"
 			]
 		}
 	]

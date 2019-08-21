@@ -1439,6 +1439,45 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/PipeLineDFT')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DFT_Demo",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DFT_Demo",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SORPROD": {},
+									"SORPRODCAT": {},
+									"sink1": {}
+								}
+							},
+							"staging": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DFT_Demo')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Pipeline_Foreach_mergefile')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1730,6 +1769,52 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzAdv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzAdvDBConn",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductCategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ParentProductCategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "ProductCategory"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzSql_tbl_LKP_SALESQTY')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1747,6 +1832,33 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzSqlBallEdw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFTDestConn')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzBlobFirstFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "DFTOutput",
+						"container": "successload"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
 			]
 		},
 		{
@@ -2686,87 +2798,91 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzAdv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzAdvDBConn",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ProductCategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ParentProductCategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "ProductCategory"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DFTDestConn')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzBlobFirstFile",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "DFTOutput",
-						"container": "successload"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PipeLineDFT')]",
+			"name": "[concat(parameters('factoryName'), '/Demo_WebHook')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "DFT_Demo",
-						"type": "ExecuteDataFlow",
+						"name": "Stored Procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Web1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[USP_Insert_Postal_Branch_Details]",
+							"storedProcedureParameters": {
+								"Block": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Block",
+									"type": "String"
+								},
+								"BranchDesc": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Description",
+									"type": "String"
+								},
+								"BranchName": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Name",
+									"type": "String"
+								},
+								"BranchType": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].BranchType",
+									"type": "String"
+								},
+								"Circle": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Circle",
+									"type": "String"
+								},
+								"Country": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Country",
+									"type": "String"
+								},
+								"DeliveryStatus": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].DeliveryStatus",
+									"type": "String"
+								},
+								"District": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].District",
+									"type": "String"
+								},
+								"Division": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Division",
+									"type": "String"
+								},
+								"Pincode": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Pincode",
+									"type": "String"
+								},
+								"Region": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Region",
+									"type": "String"
+								},
+								"State": {
+									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].State",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzAdvDBConn",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -2777,24 +2893,16 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DFT_Demo",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SORPROD": {},
-									"SORPRODCAT": {},
-									"sink1": {}
-								}
-							},
-							"staging": {}
+							"url": "https://api.postalpincode.in/pincode/500016",
+							"method": "GET",
+							"headers": {}
 						}
 					}
 				],
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DFT_Demo')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
 			]
 		}
 	]
