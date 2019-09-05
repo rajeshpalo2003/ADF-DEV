@@ -1,0 +1,28 @@
+{
+	"name": "Process_AAS_Model",
+	"properties": {
+		"activities": [
+			{
+				"name": "AAS_FullProcess",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-15.centralindia.logic.azure.com:443/workflows/f6fcddb54b01477c8dea765d11ec6e09/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vRR4XvjtPJJ05_m0CI50mQ7kEBICxk_nLgabx3VZopQ",
+					"method": "POST",
+					"body": {
+						"message": "hello world"
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
