@@ -52,6 +52,38 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Process_AAS_Model')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AAS_FullProcess",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-15.centralindia.logic.azure.com:443/workflows/f6fcddb54b01477c8dea765d11ec6e09/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vRR4XvjtPJJ05_m0CI50mQ7kEBICxk_nLgabx3VZopQ",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"message": "hello world"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzAdvDBConn')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -182,6 +214,150 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Demo_WebHook')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Stored Procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Web1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[USP_Insert_Postal_Branch_Details]",
+							"storedProcedureParameters": {
+								"Block": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Block",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"BranchDesc": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Description",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"BranchName": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Name",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"BranchType": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].BranchType",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Circle": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Circle",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Country": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Country",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"DeliveryStatus": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].DeliveryStatus",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"District": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].District",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Division": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Division",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Pincode": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Pincode",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Region": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Region",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"State": {
+									"value": {
+										"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].State",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzAdvDBConn",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.postalpincode.in/pincode/500016",
+							"method": "GET",
+							"headers": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AZADV_Customer')]",
@@ -605,117 +781,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobDeltaFileName')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_tgc')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzBlobFirstFile",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "First1.csv",
-						"container": "sbressmessage"
-					},
-					"columnDelimiter": ";",
-					"rowDelimiter": "\n",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/customerfile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzBlobFirstFile",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "customerfile.csv",
-						"container": "sbressmessage"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "String"
-					},
-					{
-						"name": "FirstName",
-						"type": "String"
-					},
-					{
-						"name": "MiddleName",
-						"type": "String"
-					},
-					{
-						"name": "LastName",
-						"type": "String"
-					},
-					{
-						"name": "CompanyName",
-						"type": "String"
-					},
-					{
-						"name": "EmailAddress",
-						"type": "String"
-					},
-					{
-						"name": "Phone",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzBlobFirstFile')]"
 			]
 		}
 	]

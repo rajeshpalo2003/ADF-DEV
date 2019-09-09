@@ -45,6 +45,113 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_tgc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzBlobFirstFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "First1.csv",
+						"container": "sbressmessage"
+					},
+					"columnDelimiter": ";",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customerfile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzBlobFirstFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "customerfile.csv",
+						"container": "sbressmessage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "MiddleName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "CompanyName",
+						"type": "String"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "String"
+					},
+					{
+						"name": "Phone",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dynamic_file_Conn')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -141,112 +248,6 @@
 					"referenceName": "SelfhostedintegrationRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo_WebHook')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Stored Procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "Web1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[USP_Insert_Postal_Branch_Details]",
-							"storedProcedureParameters": {
-								"Block": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Block",
-									"type": "String"
-								},
-								"BranchDesc": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Description",
-									"type": "String"
-								},
-								"BranchName": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Name",
-									"type": "String"
-								},
-								"BranchType": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].BranchType",
-									"type": "String"
-								},
-								"Circle": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Circle",
-									"type": "String"
-								},
-								"Country": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Country",
-									"type": "String"
-								},
-								"DeliveryStatus": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].DeliveryStatus",
-									"type": "String"
-								},
-								"District": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].District",
-									"type": "String"
-								},
-								"Division": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Division",
-									"type": "String"
-								},
-								"Pincode": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Pincode",
-									"type": "String"
-								},
-								"Region": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].Region",
-									"type": "String"
-								},
-								"State": {
-									"value": "@json(activity('Web1').output.Response)[0].PostOffice[0].State",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzAdvDBConn",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Web1",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.postalpincode.in/pincode/500016",
-							"method": "GET",
-							"headers": {}
-						}
-					}
-				],
-				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -540,7 +541,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_tgc')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DeltaCopyIfExists')]",
@@ -1300,7 +1303,9 @@
 				],
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/customerfile')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Pipeline_Foreach_mergefile')]",
@@ -1838,68 +1843,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyData_Onprem_Blob')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_pkc",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "[[dbo].[DimProductCategory]"
-							},
-							{
-								"name": "Destination",
-								"value": "sbressmessage/"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource"
-							},
-							"sink": {
-								"type": "BlobSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "Source_DS_DimProductCategory",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Dest_DS_DimProductCategory",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Demo_Cloud_Cloud"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Source_DS_DimProductCategory')]",
-				"[concat(variables('factoryId'), '/datasets/Dest_DS_DimProductCategory')]"
-			]
 		}
 	]
 }
