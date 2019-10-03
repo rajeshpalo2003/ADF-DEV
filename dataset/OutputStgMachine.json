@@ -1,0 +1,35 @@
+{
+	"name": "OutputStgMachine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DWLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Code",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Condition",
+				"type": "varchar"
+			},
+			{
+				"name": "LastModified",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "Machine"
+		}
+	}
+}
