@@ -32,7 +32,7 @@
 								},
 								"sink": {
 									"name": "Code",
-									"type": "Int32"
+									"type": "String"
 								}
 							},
 							{
