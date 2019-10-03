@@ -4,7 +4,7 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory Name",
+			"metadata": "Data Factory name",
 			"defaultValue": "ADF-INDCENTL-POC-BLOBTOSQL"
 		},
 		"Connect_OnPremAdvDW_ToBlob_connectionString": {
@@ -44,6 +44,124 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_tgc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzSqlBallEdw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EMPNO",
+						"type": "int",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "ENAME",
+						"type": "varchar",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "JOB",
+						"type": "varchar",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "MGR",
+						"type": "int",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "HIREDATE",
+						"type": "date",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "SAL",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "COMM",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "DEPTNO",
+						"type": "int",
+						"precision": 10,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[EMP]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_t6r')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobDeltaFileName",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "sbressmessage"
+					},
+					"columnDelimiter": ";",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceDataset_tgc')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -252,6 +370,86 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ReferenceDBLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Machine"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputStgMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Code",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Machine"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ConnectToDynamicFile')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -386,7 +584,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dynamic_file_Conn')]"
+				"[concat(variables('factoryId'), '/datasets/dynamic_file_Conn')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_tgc')]"
 			]
 		},
 		{
@@ -542,7 +741,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_tgc')]"
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_tgc')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_tgc')]"
 			]
 		},
 		{
@@ -849,7 +1049,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_t6r')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DeltaFileCopyPipeLine')]",
@@ -1012,7 +1214,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_t6r')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Emailsend')]",
@@ -1188,7 +1392,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dynamic_file_Conn')]"
+				"[concat(variables('factoryId'), '/datasets/dynamic_file_Conn')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_tgc')]"
 			]
 		},
 		{
@@ -1556,293 +1761,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Dest_Conn_OnpermSQL_Blob')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OnPrem_Test_Source_Conn')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Onprem_Test_Source_Conn",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "ProductKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDateKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "DueDateKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ShipDateKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ResellerKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EmployeeKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PromotionKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CurrencyKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SalesTerritoryKey",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SalesOrderNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SalesOrderLineNumber",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "RevisionNumber",
-						"type": "tinyint",
-						"precision": 3
-					},
-					{
-						"name": "OrderQuantity",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "UnitPrice",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ExtendedAmount",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "UnitPriceDiscountPct",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "DiscountAmount",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "ProductStandardCost",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TotalProductCost",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "SalesAmount",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "TaxAmt",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "CarrierTrackingNumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CustomerPONumber",
-						"type": "nvarchar"
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "DueDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ShipDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"tableName": "[[dbo].[dem2]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Onprem_Test_Source_Conn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Source_DS_DimProductCategory')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Connect_OnPremAdvDW_ToBlob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "ProductCategoryKey",
-						"type": "int",
-						"precision": 10,
-						"scale": 255
-					},
-					{
-						"name": "ProductCategoryAlternateKey",
-						"type": "int",
-						"precision": 10,
-						"scale": 255
-					},
-					{
-						"name": "EnglishProductCategoryName",
-						"type": "nvarchar",
-						"precision": 255,
-						"scale": 255
-					},
-					{
-						"name": "SpanishProductCategoryName",
-						"type": "nvarchar",
-						"precision": 255,
-						"scale": 255
-					},
-					{
-						"name": "FrenchProductCategoryName",
-						"type": "nvarchar",
-						"precision": 255,
-						"scale": 255
-					}
-				],
-				"typeProperties": {
-					"tableName": "[[dbo].[DimProductCategory]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Connect_OnPremAdvDW_ToBlob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Vw_Customer')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Onprem_Advwork_Source_Conn",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"tableName": "[[dbo].[Vw_Customer]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Onprem_Advwork_Source_Conn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DFT_Demo')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "AzAdv",
-								"type": "DatasetReference"
-							},
-							"name": "SORPROD",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "AzAdv",
-								"type": "DatasetReference"
-							},
-							"name": "SORPRODCAT",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DFTDestConn",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Join1"
-						},
-						{
-							"name": "Select1"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductID]\\n      ,[Name]\\n      ,[Color]\\n      ,[StandardCost]\\n      ,[ListPrice]\\n      ,[Size]\\n      ,[Weight]\\n      ,[ProductCategoryID]  \\n FROM [SalesLT].[Product]',\n\tformat: 'query') ~> SORPROD\nsource(output(\n\t\tProductCategoryID as integer,\n\t\tParentProductCategoryID as integer,\n\t\tName as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SORPRODCAT\nSORPROD, SORPRODCAT join(SORPROD@ProductCategoryID == SORPRODCAT@ProductCategoryID,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> Join1\nJoin1 select(mapColumn(\n\t\tCatName = SORPRODCAT@Name,\n\t\tProdName = SORPROD@Name,\n\t\tColor,\n\t\tStandardCost,\n\t\tListPrice\n\t),\n\tpartitionBy('hash', 1)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DFTOutput.txt'],\n\tpartitionBy('hash', 1)) ~> sink1"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }

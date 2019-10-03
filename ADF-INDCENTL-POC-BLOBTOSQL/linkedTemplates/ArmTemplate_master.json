@@ -4,7 +4,7 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory Name",
+			"metadata": "Data Factory name",
 			"defaultValue": "ADF-INDCENTL-POC-BLOBTOSQL"
 		},
 		"AzAdvDBConn_connectionString": {
@@ -51,6 +51,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
+		"ReferenceDBLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ReferenceDBLinkedService'"
+		},
+		"DWLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -84,7 +92,7 @@
 		},
 		"containerSasToken": {
 			"type": "string",
-			"metadata": "Sas Token to storage account containing linked ARM templates"
+			"metadata": "Sas token to storage account containing linked ARM templates"
 		}
 	},
 	"variables": {
@@ -125,6 +133,12 @@
 					},
 					"dynamicLinkservice_connectionString": {
 						"value": "[parameters('dynamicLinkservice_connectionString')]"
+					},
+					"ReferenceDBLinkedService_connectionString": {
+						"value": "[parameters('ReferenceDBLinkedService_connectionString')]"
+					},
+					"DWLinkedService_connectionString": {
+						"value": "[parameters('DWLinkedService_connectionString')]"
 					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
