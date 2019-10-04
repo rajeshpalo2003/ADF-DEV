@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
 		},
+		"DWLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
+		},
 		"Dest_Conn_OnpermSQL_Blob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Dest_Conn_OnpermSQL_Blob'"
@@ -47,17 +51,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Onprem_Test_Source_Conn'"
 		},
-		"dynamicLinkservice_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
-		},
 		"ReferenceDBLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ReferenceDBLinkedService'"
 		},
-		"DWLinkedService_connectionString": {
+		"dynamicLinkservice_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
+			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
@@ -1483,6 +1483,186 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataToStg')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyDataStgMachine",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[Condition]\n      ,[LastModified]\n  FROM [dbo].[Machine]\n  WHERE [LastModified] >(SELECT  ISNULL(MAX([LastModified]),'1999-01-01 00:00:00.0000000') FROM [stg].[Machine])"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Condition",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Condition",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastModified",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "LastModified",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "InputMachine",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputStgMachine",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "CopyDataStgCustomer",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "CopyDataStgMachine",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[LastModified]\n  FROM [dbo].[Customer]\n  WHERE [LastModified] >(SELECT  ISNULL(MAX([LastModified]),'1999-01-01 00:00:00.0000000') FROM [stg].[Customer])"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastModified",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "LastModified",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "InputCustomer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputStgCustomer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InputMachine')]",
+				"[concat(variables('factoryId'), '/datasets/OutputStgMachine')]",
+				"[concat(variables('factoryId'), '/datasets/InputCustomer')]",
+				"[concat(variables('factoryId'), '/datasets/OutputStgCustomer')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Lookupdata_OnPremtoAzSQL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2286,6 +2466,50 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ReferenceDBLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Machine"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ReferenceDBLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/OnPrem_Test_Source_Conn')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2446,6 +2670,46 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Onprem_Test_Source_Conn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputStgMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Code",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Machine"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
 			]
 		},
 		{
@@ -2821,6 +3085,19 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DWLinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('DWLinkedService_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Dest_Conn_OnpermSQL_Blob')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2876,6 +3153,19 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/SelfhostedintegrationRuntime')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ReferenceDBLinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('ReferenceDBLinkedService_connectionString')]"
+				}
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dynamicLinkservice')]",
@@ -2982,118 +3272,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataToStg')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyDataStgMachine",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource"
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Code",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Code",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Name",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Name",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Condition",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Condition",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "LastModified",
-											"type": "DateTime"
-										},
-										"sink": {
-											"name": "LastModified",
-											"type": "DateTime"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "InputMachine",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OutputStgMachine",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Demo_ADLS_PROJ"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/InputMachine')]",
-				"[concat(variables('factoryId'), '/datasets/OutputStgMachine')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ReferenceDBLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('ReferenceDBLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
+			"name": "[concat(parameters('factoryName'), '/InputCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3118,10 +3297,6 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Condition",
-						"type": "varchar"
-					},
-					{
 						"name": "LastModified",
 						"type": "datetime2",
 						"scale": 7
@@ -3129,7 +3304,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "Machine"
+					"table": "Customer"
 				}
 			},
 			"dependsOn": [
@@ -3137,20 +3312,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DWLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('DWLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OutputStgMachine')]",
+			"name": "[concat(parameters('factoryName'), '/OutputStgCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3171,10 +3333,6 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Condition",
-						"type": "varchar"
-					},
-					{
 						"name": "LastModified",
 						"type": "datetime2",
 						"scale": 7
@@ -3182,7 +3340,7 @@
 				],
 				"typeProperties": {
 					"schema": "stg",
-					"table": "Machine"
+					"table": "Customer"
 				}
 			},
 			"dependsOn": [

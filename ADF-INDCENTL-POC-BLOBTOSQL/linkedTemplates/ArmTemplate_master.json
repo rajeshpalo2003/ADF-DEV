@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
 		},
+		"DWLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
+		},
 		"Dest_Conn_OnpermSQL_Blob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Dest_Conn_OnpermSQL_Blob'"
@@ -47,17 +51,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Onprem_Test_Source_Conn'"
 		},
-		"dynamicLinkservice_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
-		},
 		"ReferenceDBLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ReferenceDBLinkedService'"
 		},
-		"DWLinkedService_connectionString": {
+		"dynamicLinkservice_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
+			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
@@ -131,14 +131,14 @@
 					"AzureBlobfailedload_connectionString": {
 						"value": "[parameters('AzureBlobfailedload_connectionString')]"
 					},
-					"dynamicLinkservice_connectionString": {
-						"value": "[parameters('dynamicLinkservice_connectionString')]"
+					"DWLinkedService_connectionString": {
+						"value": "[parameters('DWLinkedService_connectionString')]"
 					},
 					"ReferenceDBLinkedService_connectionString": {
 						"value": "[parameters('ReferenceDBLinkedService_connectionString')]"
 					},
-					"DWLinkedService_connectionString": {
-						"value": "[parameters('DWLinkedService_connectionString')]"
+					"dynamicLinkservice_connectionString": {
+						"value": "[parameters('dynamicLinkservice_connectionString')]"
 					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
@@ -178,18 +178,6 @@
 					},
 					"Onprem_Test_Source_Conn_connectionString": {
 						"value": "[parameters('Onprem_Test_Source_Conn_connectionString')]"
-					},
-					"Dest_AzureBlob_properties_typeProperties_fileName": {
-						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_fileName')]"
-					},
-					"Dest_AzureBlob_properties_typeProperties_folderPath": {
-						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_folderPath')]"
-					},
-					"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
-						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_fileName')]"
-					},
-					"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
-						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -210,6 +198,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Dest_AzureBlob_properties_typeProperties_fileName": {
+						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_fileName')]"
+					},
+					"Dest_AzureBlob_properties_typeProperties_folderPath": {
+						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_folderPath')]"
+					},
+					"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
+						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_fileName')]"
+					},
+					"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
+						"value": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_folderPath')]"
 					}
 				}
 			},

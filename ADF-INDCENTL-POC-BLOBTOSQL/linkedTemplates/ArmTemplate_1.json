@@ -22,22 +22,6 @@
 		"Onprem_Test_Source_Conn_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Onprem_Test_Source_Conn'"
-		},
-		"Dest_AzureBlob_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"Dest_AzureBlob_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "sbressmessage"
-		},
-		"Dest_DS_DimProductCategory_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "sbressmessage"
 		}
 	},
 	"variables": {
@@ -107,6 +91,86 @@
 				],
 				"typeProperties": {
 					"tableName": "[[dbo].[EMP]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ReferenceDBLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Machine"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputStgMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Code",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Machine"
 				}
 			},
 			"dependsOn": []
@@ -370,7 +434,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
+			"name": "[concat(parameters('factoryName'), '/InputCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -395,10 +459,6 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Condition",
-						"type": "varchar"
-					},
-					{
 						"name": "LastModified",
 						"type": "datetime2",
 						"scale": 7
@@ -406,13 +466,13 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "Machine"
+					"table": "Customer"
 				}
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutputStgMachine')]",
+			"name": "[concat(parameters('factoryName'), '/OutputStgCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -433,10 +493,6 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Condition",
-						"type": "varchar"
-					},
-					{
 						"name": "LastModified",
 						"type": "datetime2",
 						"scale": 7
@@ -444,7 +500,7 @@
 				],
 				"typeProperties": {
 					"schema": "stg",
-					"table": "Machine"
+					"table": "Customer"
 				}
 			},
 			"dependsOn": []
@@ -1513,14 +1569,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Pipeline_Foreach_mergefile')]",
+			"name": "[concat(parameters('factoryName'), '/LoadDataToStg')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Get Metadata1",
-						"type": "GetMetadata",
+						"name": "CopyDataStgMachine",
+						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -1531,235 +1587,165 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataset": {
-								"referenceName": "DelimitedText1",
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[Condition]\n      ,[LastModified]\n  FROM [dbo].[Machine]\n  WHERE [LastModified] >(SELECT  ISNULL(MAX([LastModified]),'1999-01-01 00:00:00.0000000') FROM [stg].[Machine])"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Condition",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Condition",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastModified",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "LastModified",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "InputMachine",
 								"type": "DatasetReference",
 								"parameters": {}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
 							}
-						}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputStgMachine",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					},
 					{
-						"name": "ForEach1",
-						"type": "ForEach",
+						"name": "CopyDataStgCustomer",
+						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Get Metadata1",
+								"activity": "CopyDataStgMachine",
 								"dependencyConditions": [
 									"Succeeded"
 								]
 							}
 						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
-							"items": {
-								"value": "@activity('Get Metadata1').output.childItems",
-								"type": "Expression"
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[LastModified]\n  FROM [dbo].[Customer]\n  WHERE [LastModified] >(SELECT  ISNULL(MAX([LastModified]),'1999-01-01 00:00:00.0000000') FROM [stg].[Customer])"
 							},
-							"activities": [
-								{
-									"name": "Copy Data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
 										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobStorageReadSettings",
-												"recursive": true,
-												"wildcardFileName": "*.csv",
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
+											"name": "Code",
+											"type": "String"
 										},
 										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings",
-												"copyBehavior": "MergeFiles"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"mappings": [
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 1
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 1
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 2
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 2
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 3
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 3
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 4
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 4
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 5
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 5
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 6
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 6
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 7
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 7
-													}
-												},
-												{
-													"source": {
-														"type": "String",
-														"ordinal": 8
-													},
-													"sink": {
-														"type": "String",
-														"ordinal": 8
-													}
-												}
-											]
+											"name": "Code",
+											"type": "String"
 										}
 									},
-									"inputs": [
-										{
-											"referenceName": "DelimitedText1",
-											"type": "DatasetReference",
-											"parameters": {}
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
 										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DelimitedText2",
-											"type": "DatasetReference",
-											"parameters": {}
+									},
+									{
+										"source": {
+											"name": "LastModified",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "LastModified",
+											"type": "DateTime"
 										}
-									]
-								}
-							]
-						}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "InputCustomer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputStgCustomer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"folder": {
-					"name": "Demo_Cloud_Cloud"
+					"name": "Demo_ADLS_PROJ"
 				},
 				"annotations": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dest_AzureBlob')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Dest_Conn_OnpermSQL_Blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"format": {
-						"type": "OrcFormat"
-					},
-					"fileName": "[parameters('Dest_AzureBlob_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('Dest_AzureBlob_properties_typeProperties_folderPath')]"
-				}
-			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Dest_Conn_OnpermSQL_Blob')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Dest_DS_DimProductCategory')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Dest_Conn_OnpermSQL_Blob",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"format": {
-						"type": "OrcFormat"
-					},
-					"fileName": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('Dest_DS_DimProductCategory_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Dest_Conn_OnpermSQL_Blob')]"
+				"[concat(variables('factoryId'), '/datasets/InputMachine')]",
+				"[concat(variables('factoryId'), '/datasets/OutputStgMachine')]",
+				"[concat(variables('factoryId'), '/datasets/InputCustomer')]",
+				"[concat(variables('factoryId'), '/datasets/OutputStgCustomer')]"
 			]
 		}
 	]
