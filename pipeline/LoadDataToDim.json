@@ -1,0 +1,9 @@
+{
+	"name": "LoadDataToDim",
+	"properties": {
+		"folder": {
+			"name": "Demo_ADLS_PROJ"
+		},
+		"annotations": []
+	}
+}
