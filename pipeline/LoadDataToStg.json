@@ -16,7 +16,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource"
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[Condition]\n      ,[LastModified]\n  FROM [dbo].[Machine]\n  WHERE [LastModified] >(SELECT  MAX(ISNULL([LastModified],'1999-01-01 00:00:00.0000000')) FROM [stg].[Machine])"
 					},
 					"sink": {
 						"type": "AzureSqlSink"
