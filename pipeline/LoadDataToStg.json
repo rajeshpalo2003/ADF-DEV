@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[Condition]\n      ,[LastModified]\n  FROM [dbo].[Machine]\n  WHERE [LastModified] >(SELECT  MAX(ISNULL([LastModified],'1999-01-01 00:00:00.0000000')) FROM [stg].[Machine])"
+						"sqlReaderQuery": "SELECT [Code]\n      ,[Name]\n      ,[Condition]\n      ,[LastModified]\n  FROM [dbo].[Machine]\n  WHERE [LastModified] >(SELECT  ISNULL(MAX([LastModified]),'1999-01-01 00:00:00.0000000') FROM [stg].[Machine])"
 					},
 					"sink": {
 						"type": "AzureSqlSink"
@@ -81,6 +81,29 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "CopyDataStgCustomer",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "CopyDataStgMachine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
 			}
 		],
 		"folder": {
