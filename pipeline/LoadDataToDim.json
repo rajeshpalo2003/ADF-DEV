@@ -4,7 +4,7 @@
 		"activities": [
 			{
 				"name": "LoadDimMachine",
-				"type": "Copy",
+				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,27 +15,12 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[stg].[uspLoadDimMachine]"
-					},
-					"sink": {
-						"type": "AzureSqlSink"
-					},
-					"enableStaging": false
+					"storedProcedureName": "[stg].[uspLoadDimMachine]"
 				},
-				"inputs": [
-					{
-						"referenceName": "OutputStgMachine",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "OutputDimMachine",
-						"type": "DatasetReference"
-					}
-				]
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"folder": {
