@@ -1,0 +1,48 @@
+{
+	"name": "OutputDimMachine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DWLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Condition",
+				"type": "varchar"
+			},
+			{
+				"name": "CurrentRow",
+				"type": "bit"
+			},
+			{
+				"name": "ValidTo",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastModified",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "prod",
+			"table": "DimMachine"
+		}
+	}
+}
