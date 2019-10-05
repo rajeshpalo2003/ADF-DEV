@@ -394,6 +394,69 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataToDim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoadDimMachine",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[uspLoadDimMachine]"
+						},
+						"linkedServiceName": {
+							"referenceName": "DWLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "LoadDimCustomer",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "LoadDimMachine",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[uspLoadDimCustomer]"
+						},
+						"linkedServiceName": {
+							"referenceName": "DWLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AZADV_Customer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -624,75 +687,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobfailedload')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DestinationDataset_t6r')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzSqlBallEdw",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "EMPNO",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "ENAME",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "JOB",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "MGR",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "HIREDATE",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "SAL",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "COMM",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "DEPTNO",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"tableName": "[[dbo].[EMP]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzSqlBallEdw')]"
 			]
 		}
 	]

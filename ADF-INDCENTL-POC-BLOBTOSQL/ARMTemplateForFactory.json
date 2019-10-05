@@ -1483,6 +1483,69 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataToDim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoadDimMachine",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[uspLoadDimMachine]"
+						},
+						"linkedServiceName": {
+							"referenceName": "DWLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "LoadDimCustomer",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "LoadDimMachine",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[stg].[uspLoadDimCustomer]"
+						},
+						"linkedServiceName": {
+							"referenceName": "DWLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataToStg')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1608,7 +1671,7 @@
 										},
 										"sink": {
 											"name": "Code",
-											"type": "String"
+											"type": "Int32"
 										}
 									},
 									{
@@ -2466,6 +2529,46 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/InputCustomer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ReferenceDBLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ReferenceDBLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/InputMachine')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2670,6 +2773,42 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Onprem_Test_Source_Conn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OutputStgCustomer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Code",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
 			]
 		},
 		{
@@ -3263,7 +3402,7 @@
 							"name": "Select1"
 						}
 					],
-					"script": "\n\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductID]\\n      ,[Name]\\n      ,[Color]\\n      ,[StandardCost]\\n      ,[ListPrice]\\n      ,[Size]\\n      ,[Weight]\\n      ,[ProductCategoryID]  \\n FROM [SalesLT].[Product]',\n\tformat: 'query') ~> SORPROD\nsource(output(\n\t\tProductCategoryID as integer,\n\t\tParentProductCategoryID as integer,\n\t\tName as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SORPRODCAT\nSORPROD, SORPRODCAT join(SORPROD@ProductCategoryID == SORPRODCAT@ProductCategoryID,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> Join1\nJoin1 select(mapColumn(\n\t\tCatName = SORPRODCAT@Name,\n\t\tProdName = SORPROD@Name,\n\t\tColor,\n\t\tStandardCost,\n\t\tListPrice\n\t),\n\tpartitionBy('hash', 1)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DFTOutput.txt'],\n\tpartitionBy('hash', 1)) ~> sink1"
+					"script": "\n\nsource(output(\n\t\tProductID as integer,\n\t\tName as string,\n\t\tColor as string,\n\t\tStandardCost as decimal(19,4),\n\t\tListPrice as decimal(19,4),\n\t\tSize as string,\n\t\tWeight as decimal(8,2),\n\t\tProductCategoryID as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tquery: 'SELECT  [ProductID]\\n      ,[Name]\\n      ,[Color]\\n      ,[StandardCost]\\n      ,[ListPrice]\\n      ,[Size]\\n      ,[Weight]\\n      ,[ProductCategoryID]  \\n FROM [SalesLT].[Product]',\n\tformat: 'query') ~> SORPROD\nsource(output(\n\t\tProductCategoryID as integer,\n\t\tParentProductCategoryID as integer,\n\t\tName as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SORPRODCAT\nSORPROD, SORPRODCAT join(SORPROD@ProductCategoryID == SORPRODCAT@ProductCategoryID,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> Join1\nJoin1 select(mapColumn(\n\t\tCatName = SORPRODCAT@Name,\n\t\tProdName = SORPROD@Name,\n\t\tColor,\n\t\tStandardCost,\n\t\tListPrice\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['DFTOutput.txt'],\n\tpartitionBy('hash', 1)) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -3272,12 +3411,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/InputCustomer')]",
+			"name": "[concat(parameters('factoryName'), '/OutputDimMachine')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "ReferenceDBLinkedService",
+					"referenceName": "DWLinkedService",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -3297,50 +3436,27 @@
 						"type": "varchar"
 					},
 					{
-						"name": "LastModified",
-						"type": "datetime2",
-						"scale": 7
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ReferenceDBLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OutputStgCustomer')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Code",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Name",
+						"name": "Condition",
 						"type": "varchar"
 					},
 					{
+						"name": "CurrentRow",
+						"type": "bit"
+					},
+					{
+						"name": "ValidTo",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
 						"name": "LastModified",
 						"type": "datetime2",
 						"scale": 7
 					}
 				],
 				"typeProperties": {
-					"schema": "stg",
-					"table": "Customer"
+					"schema": "prod",
+					"table": "DimMachine"
 				}
 			},
 			"dependsOn": [
