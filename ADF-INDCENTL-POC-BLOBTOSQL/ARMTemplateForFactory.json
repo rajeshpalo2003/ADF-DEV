@@ -2776,6 +2776,59 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/OutputDimMachine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Name",
+						"type": "varchar"
+					},
+					{
+						"name": "Condition",
+						"type": "varchar"
+					},
+					{
+						"name": "CurrentRow",
+						"type": "bit"
+					},
+					{
+						"name": "ValidTo",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "prod",
+					"table": "DimMachine"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/OutputStgCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3411,56 +3464,55 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OutputDimMachine')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/LoadMaster')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
+				"activities": [
 					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
+						"name": "StgLoad",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataToStg",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
 					},
 					{
-						"name": "Code",
-						"type": "varchar"
-					},
-					{
-						"name": "Name",
-						"type": "varchar"
-					},
-					{
-						"name": "Condition",
-						"type": "varchar"
-					},
-					{
-						"name": "CurrentRow",
-						"type": "bit"
-					},
-					{
-						"name": "ValidTo",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "LastModified",
-						"type": "datetime2",
-						"scale": 7
+						"name": "DimLoad",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "StgLoad",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataToDim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
 					}
 				],
-				"typeProperties": {
-					"schema": "prod",
-					"table": "DimMachine"
-				}
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
+				"[concat(variables('factoryId'), '/pipelines/LoadDataToStg')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataToDim')]"
 			]
 		}
 	]
