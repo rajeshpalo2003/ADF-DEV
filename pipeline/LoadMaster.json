@@ -36,6 +36,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Demo_ADLS_PROJ"
+		},
 		"annotations": []
 	}
 }
