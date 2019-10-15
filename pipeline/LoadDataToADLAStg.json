@@ -1,6 +1,28 @@
 {
 	"name": "LoadDataToADLAStg",
 	"properties": {
+		"activities": [
+			{
+				"name": "uspGetMachineCycles",
+				"type": "DataLakeAnalyticsU-SQL",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"scriptPath": ""
+				},
+				"linkedServiceName": {
+					"referenceName": "ADLACONN",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
 		"folder": {
 			"name": "Demo_ADLS_PROJ"
 		},
