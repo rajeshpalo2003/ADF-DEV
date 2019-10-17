@@ -15,10 +15,18 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"scriptPath": ""
+					"scriptPath": "ADFDW.dbo.uspGetMachineCycles(System.DateTime.Parse(@sliceStart), System.DateTime.Parse(@sliceEnd))",
+					"scriptLinkedService": {
+						"referenceName": "linkedService1",
+						"type": "LinkedServiceReference"
+					},
+					"parameters": {
+						"sliceStart": "$$Text.Format('{0:yyyy-MM-ddTHH:mm:ssZ}', SliceStart)",
+						"sliceEnd": "$$Text.Format('{0:yyyy-MM-ddTHH:mm:ssZ}', SliceEnd)"
+					}
 				},
 				"linkedServiceName": {
-					"referenceName": "ADLACONN",
+					"referenceName": "AzureDataLakeAnalytics1",
 					"type": "LinkedServiceReference"
 				}
 			}
