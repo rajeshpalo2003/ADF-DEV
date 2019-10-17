@@ -1,0 +1,37 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADF-INDCENTL-POC-BLOBTOSQL"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "https://adlsdw.azuredatalakestore.net/webhdfs/v1",
+					"servicePrincipalId": "bbfe9984-cb82-4a1a-aada-5a34940576e3",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "**********"
+					},
+					"tenant": "c96c97cf-4577-46e9-a97e-9910b78ad8e9",
+					"subscriptionId": "40066356-3916-4023-abd1-ff0bdef8f880",
+					"resourceGroupName": "RG-INDCENTL-POC-BALLEDW"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
