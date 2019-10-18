@@ -21,8 +21,8 @@
 						"type": "LinkedServiceReference"
 					},
 					"parameters": {
-						"sliceStart": "$$Text.Format('{0:yyyy-MM-dd}', SliceStart)",
-						"sliceEnd": "$$Text.Format('{0:yyyy-MM-dd}', SliceEnd)"
+						"sliceStart": "",
+						"sliceEnd": ""
 					}
 				},
 				"linkedServiceName": {
