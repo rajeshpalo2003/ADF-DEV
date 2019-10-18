@@ -22,11 +22,11 @@
 					},
 					"parameters": {
 						"SliceStartDate": {
-							"value": "@formatDateTime(utcnow())",
+							"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
 							"type": "Expression"
 						},
 						"SliceEndDate": {
-							"value": "@formatDateTime(utcnow())",
+							"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
 							"type": "Expression"
 						}
 					}
