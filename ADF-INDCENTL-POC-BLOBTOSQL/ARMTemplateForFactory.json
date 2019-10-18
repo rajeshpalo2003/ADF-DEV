@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobfailedload'"
 		},
+		"AzureDataLakeAnalytics1_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDataLakeAnalytics1'"
+		},
 		"Connect_OnPremAdvDW_ToBlob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
@@ -59,6 +63,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
+		"linkedService1_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -74,6 +82,46 @@
 		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sbressmessage"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
+			"type": "string",
+			"defaultValue": "adlaball"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
+		},
+		"linkedService1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"linkedService1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"linkedService1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"linkedService1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"linkedService1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
@@ -1483,6 +1531,57 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LoadDataToADLAStg')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "uspGetMachineCycles",
+						"type": "DataLakeAnalyticsU-SQL",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": "ADFDW/Script/ADFDW.dbo.uspGetMachineCycles.txt",
+							"scriptLinkedService": {
+								"referenceName": "linkedService1",
+								"type": "LinkedServiceReference"
+							},
+							"parameters": {
+								"SliceStartDate": {
+									"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
+									"type": "Expression"
+								},
+								"SliceEndDate": {
+									"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDataLakeAnalytics1",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linkedService1')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeAnalytics1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LoadDataToDim')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1723,6 +1822,58 @@
 				"[concat(variables('factoryId'), '/datasets/OutputStgMachine')]",
 				"[concat(variables('factoryId'), '/datasets/InputCustomer')]",
 				"[concat(variables('factoryId'), '/datasets/OutputStgCustomer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadMaster')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "StgLoad",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataToStg",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "DimLoad",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "StgLoad",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LoadDataToDim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo_ADLS_PROJ"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LoadDataToStg')]",
+				"[concat(variables('factoryId'), '/pipelines/LoadDataToDim')]"
 			]
 		},
 		{
@@ -3258,6 +3409,27 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeAnalytics1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeAnalytics",
+				"typeProperties": {
+					"accountName": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_accountName')]",
+					"servicePrincipalId": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeAnalytics1_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Connect_OnPremAdvDW_ToBlob')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3373,6 +3545,27 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "[parameters('linkedService1_properties_typeProperties_dataLakeStoreUri')]",
+					"servicePrincipalId": "[parameters('linkedService1_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('linkedService1_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('linkedService1_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('linkedService1_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('linkedService1_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SSISintegrationRuntime')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -3461,58 +3654,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzAdv')]",
 				"[concat(variables('factoryId'), '/datasets/DFTDestConn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadMaster')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "StgLoad",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "LoadDataToStg",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "DimLoad",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "StgLoad",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "LoadDataToDim",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"folder": {
-					"name": "Demo_ADLS_PROJ"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/LoadDataToStg')]",
-				"[concat(variables('factoryId'), '/pipelines/LoadDataToDim')]"
 			]
 		}
 	]

@@ -23,6 +23,9 @@
 		"AzureBlobfailedload_connectionString": {
 			"value": ""
 		},
+		"AzureDataLakeAnalytics1_servicePrincipalKey": {
+			"value": ""
+		},
 		"Connect_OnPremAdvDW_ToBlob_connectionString": {
 			"value": ""
 		},
@@ -44,6 +47,9 @@
 		"dynamicLinkservice_connectionString": {
 			"value": ""
 		},
+		"linkedService1_servicePrincipalKey": {
+			"value": ""
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"value": ""
 		},
@@ -55,6 +61,36 @@
 		},
 		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
 			"value": "sbressmessage"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
+			"value": "adlaball"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId": {
+			"value": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_tenant": {
+			"value": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId": {
+			"value": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
+			"value": "RG-INDCENTL-POC-BALLEDW"
+		},
+		"linkedService1_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"linkedService1_properties_typeProperties_servicePrincipalId": {
+			"value": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"linkedService1_properties_typeProperties_tenant": {
+			"value": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"linkedService1_properties_typeProperties_subscriptionId": {
+			"value": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"linkedService1_properties_typeProperties_resourceGroupName": {
+			"value": "RG-INDCENTL-POC-BALLEDW"
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "db-seast-poc-balledw.database.windows.net"

@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobfailedload'"
 		},
+		"AzureDataLakeAnalytics1_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDataLakeAnalytics1'"
+		},
 		"Connect_OnPremAdvDW_ToBlob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
@@ -59,6 +63,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dynamicLinkservice'"
 		},
+		"linkedService1_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -74,6 +82,46 @@
 		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sbressmessage"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
+			"type": "string",
+			"defaultValue": "adlaball"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
+		},
+		"linkedService1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"linkedService1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"linkedService1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"linkedService1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"linkedService1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
@@ -131,6 +179,9 @@
 					"AzureBlobfailedload_connectionString": {
 						"value": "[parameters('AzureBlobfailedload_connectionString')]"
 					},
+					"AzureDataLakeAnalytics1_servicePrincipalKey": {
+						"value": "[parameters('AzureDataLakeAnalytics1_servicePrincipalKey')]"
+					},
 					"DWLinkedService_connectionString": {
 						"value": "[parameters('DWLinkedService_connectionString')]"
 					},
@@ -139,6 +190,39 @@
 					},
 					"dynamicLinkservice_connectionString": {
 						"value": "[parameters('dynamicLinkservice_connectionString')]"
+					},
+					"linkedService1_servicePrincipalKey": {
+						"value": "[parameters('linkedService1_servicePrincipalKey')]"
+					},
+					"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
+						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_accountName')]"
+					},
+					"AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_servicePrincipalId')]"
+					},
+					"AzureDataLakeAnalytics1_properties_typeProperties_tenant": {
+						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_tenant')]"
+					},
+					"AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId')]"
+					},
+					"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName')]"
+					},
+					"linkedService1_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('linkedService1_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"linkedService1_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('linkedService1_properties_typeProperties_servicePrincipalId')]"
+					},
+					"linkedService1_properties_typeProperties_tenant": {
+						"value": "[parameters('linkedService1_properties_typeProperties_tenant')]"
+					},
+					"linkedService1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('linkedService1_properties_typeProperties_subscriptionId')]"
+					},
+					"linkedService1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('linkedService1_properties_typeProperties_resourceGroupName')]"
 					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
