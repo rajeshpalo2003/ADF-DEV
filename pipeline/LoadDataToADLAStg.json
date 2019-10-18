@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"scriptPath": "ADFDW/ADFDW.dbo.uspGetMachineCycles.txt",
+					"scriptPath": "ADFDW/Script/ADFDW.dbo.uspGetMachineCycles.txt",
 					"scriptLinkedService": {
 						"referenceName": "linkedService1",
 						"type": "LinkedServiceReference"
