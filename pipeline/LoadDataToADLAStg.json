@@ -19,6 +19,16 @@
 					"scriptLinkedService": {
 						"referenceName": "linkedService1",
 						"type": "LinkedServiceReference"
+					},
+					"parameters": {
+						"SliceStartDate": {
+							"value": "@formatDateTime(utcnow())",
+							"type": "Expression"
+						},
+						"SliceEndDate": {
+							"value": "@formatDateTime(utcnow())",
+							"type": "Expression"
+						}
 					}
 				},
 				"linkedServiceName": {
