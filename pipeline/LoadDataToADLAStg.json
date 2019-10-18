@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"scriptPath": "ADFDW.dbo.uspGetMachineCycles(System.DateTime.Parse(@sliceStart), System.DateTime.Parse(@sliceEnd))",
+					"scriptPath": "ADFDW/ADFDW.dbo.uspGetMachineCycles.txt",
 					"scriptLinkedService": {
 						"referenceName": "linkedService1",
 						"type": "LinkedServiceReference"
