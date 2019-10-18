@@ -19,10 +19,6 @@
 					"scriptLinkedService": {
 						"referenceName": "linkedService1",
 						"type": "LinkedServiceReference"
-					},
-					"parameters": {
-						"sliceStart": "",
-						"sliceEnd": ""
 					}
 				},
 				"linkedServiceName": {
