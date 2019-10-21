@@ -1,0 +1,16 @@
+{
+	"name": "ADLA_Stg_MachineCycle",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://adlsdw.azuredatalakestore.net/webhdfs/v1",
+			"servicePrincipalId": "bbfe9984-cb82-4a1a-aada-5a34940576e3",
+			"tenant": "c96c97cf-4577-46e9-a97e-9910b78ad8e9",
+			"subscriptionId": "40066356-3916-4023-abd1-ff0bdef8f880",
+			"resourceGroupName": "RG-INDCENTL-POC-BALLEDW",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFERi1JTkRDRU5UTC1QT0MtQkxPQlRPU1FMXzgwZDlkZDY1LTBmNGMtNDY3OS05NTJkLTIwNmQ3OGQ5MDkwNCINCn0="
+		}
+	}
+}
