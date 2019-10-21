@@ -701,300 +701,96 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ConnectToDynamicFile')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/StgMachineCycleFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"preCopyScript": "  truncate table [dbo].[EMP]"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 1
-										},
-										"sink": {
-											"name": "EMPNO",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 2
-										},
-										"sink": {
-											"name": "ENAME",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 3
-										},
-										"sink": {
-											"name": "JOB",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 4
-										},
-										"sink": {
-											"name": "MGR",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 5
-										},
-										"sink": {
-											"name": "HIREDATE",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 6
-										},
-										"sink": {
-											"name": "SAL",
-											"type": "Decimal"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 7
-										},
-										"sink": {
-											"name": "COMM",
-											"type": "Decimal"
-										}
-									},
-									{
-										"source": {
-											"ordinal": 8
-										},
-										"sink": {
-											"name": "DEPTNO",
-											"type": "Int32"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "dynamic_file_Conn",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_tgc",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Demo_Cloud_Cloud"
+				"linkedServiceName": {
+					"referenceName": "ADLA_Stg_MachineCycle",
+					"type": "LinkedServiceReference"
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureDataLakeStoreLocation",
+						"fileName": "stgMachineCycles.csv",
+						"folderPath": "ADFDW/Staging"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dynamic_file_Conn')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_tgc')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyPipeline_blobtosql')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/Stg_Machine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "copy the data from blob to sql db.",
-				"activities": [
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
 					{
-						"name": "Copy_tgc",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "sbressmessage//First1.csv"
-							},
-							{
-								"name": "Destination",
-								"value": "[[dbo].[EMP]"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings",
-									"skipLineCount": 0
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"preCopyScript": "truncate table [dbo].[EMP]"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 1
-										},
-										"sink": {
-											"name": "EMPNO",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 2
-										},
-										"sink": {
-											"name": "ENAME",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 3
-										},
-										"sink": {
-											"name": "JOB",
-											"type": "String"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 4
-										},
-										"sink": {
-											"name": "MGR",
-											"type": "Int32"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 5
-										},
-										"sink": {
-											"name": "HIREDATE",
-											"type": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 6
-										},
-										"sink": {
-											"name": "SAL",
-											"type": "Decimal"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 7
-										},
-										"sink": {
-											"name": "COMM",
-											"type": "Decimal"
-										}
-									},
-									{
-										"source": {
-											"type": "String",
-											"ordinal": 8
-										},
-										"sink": {
-											"name": "DEPTNO",
-											"type": "Int32"
-										}
-									}
-								]
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_tgc",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_tgc",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "CycleId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "MachineName",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "StartDateTime",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "EndDateTime",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
 					}
 				],
-				"folder": {
-					"name": "Demo_Cloud_Cloud"
-				},
-				"annotations": []
+				"typeProperties": {
+					"schema": "stg",
+					"table": "MachineCycle"
+				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_tgc')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_tgc')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

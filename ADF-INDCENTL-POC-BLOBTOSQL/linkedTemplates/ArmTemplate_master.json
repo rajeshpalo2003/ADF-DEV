@@ -67,6 +67,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
 		},
+		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ADLA_Stg_MachineCycle'"
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -134,6 +138,26 @@
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
 		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -194,6 +218,9 @@
 					"linkedService1_servicePrincipalKey": {
 						"value": "[parameters('linkedService1_servicePrincipalKey')]"
 					},
+					"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_servicePrincipalKey')]"
+					},
 					"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
 						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_accountName')]"
 					},
@@ -232,6 +259,21 @@
 					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_tenant')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName')]"
 					}
 				}
 			},
@@ -299,6 +341,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
 			]
 		}
 	]

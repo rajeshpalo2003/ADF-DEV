@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
 		},
+		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ADLA_Stg_MachineCycle'"
+		},
 		"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
 			"type": "string",
 			"defaultValue": "adlaball"
@@ -101,6 +105,26 @@
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
 		}
 	},
 	"variables": {
@@ -340,6 +364,27 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ADLA_Stg_MachineCycle')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri')]",
+					"servicePrincipalId": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADLA_Stg_MachineCycle_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Demo_WebHook')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -481,57 +526,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LoadDataToADLAStg')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "uspGetMachineCycles",
-						"type": "DataLakeAnalyticsU-SQL",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"scriptPath": "ADFDW/Script/ADFDW.dbo.uspGetMachineCycles.txt",
-							"scriptLinkedService": {
-								"referenceName": "linkedService1",
-								"type": "LinkedServiceReference"
-							},
-							"parameters": {
-								"SliceStartDate": {
-									"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
-									"type": "Expression"
-								},
-								"SliceEndDate": {
-									"value": "@formatDateTime(utcnow(),'yyyy-MM-dd HH:mm:ssZ')",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDataLakeAnalytics1",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "Demo_ADLS_PROJ"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linkedService1')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeAnalytics1')]"
 			]
 		},
 		{

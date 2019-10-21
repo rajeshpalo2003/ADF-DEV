@@ -50,6 +50,9 @@
 		"linkedService1_servicePrincipalKey": {
 			"value": ""
 		},
+		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+			"value": ""
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"value": ""
 		},
@@ -100,6 +103,21 @@
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"value": ""
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+			"value": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+			"value": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+			"value": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+			"value": "RG-INDCENTL-POC-BALLEDW"
 		},
 		"containerUri": {
 			"value": ""

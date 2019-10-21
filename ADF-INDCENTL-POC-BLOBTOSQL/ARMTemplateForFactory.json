@@ -67,6 +67,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
 		},
+		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ADLA_Stg_MachineCycle'"
+		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -133,6 +137,26 @@
 		},
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
 		}
 	},
 	"variables": {
@@ -1569,6 +1593,121 @@
 							"referenceName": "AzureDataLakeAnalytics1",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Copy_ADLA_StgMachineCycle",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "uspGetMachineCycles",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureDataLakeStoreReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"type": "Int32",
+											"ordinal": 1
+										},
+										"sink": {
+											"name": "CycleId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"type": "String",
+											"ordinal": 2
+										},
+										"sink": {
+											"name": "MachineName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"type": "String",
+											"ordinal": 3
+										},
+										"sink": {
+											"name": "CustomerName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"type": "DateTime",
+											"ordinal": 4
+										},
+										"sink": {
+											"name": "StartDateTime",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"type": "DateTime",
+											"ordinal": 5
+										},
+										"sink": {
+											"name": "EndDateTime",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"type": "DateTime",
+											"ordinal": 6
+										},
+										"sink": {
+											"name": "LastModified",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "StgMachineCycleFile",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Stg_Machine",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"folder": {
@@ -1578,7 +1717,9 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linkedService1')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeAnalytics1')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeAnalytics1')]",
+				"[concat(variables('factoryId'), '/datasets/StgMachineCycleFile')]",
+				"[concat(variables('factoryId'), '/datasets/Stg_Machine')]"
 			]
 		},
 		{
@@ -3654,6 +3795,123 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzAdv')]",
 				"[concat(variables('factoryId'), '/datasets/DFTDestConn')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLA_Stg_MachineCycle')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataLakeStore",
+				"typeProperties": {
+					"dataLakeStoreUri": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri')]",
+					"servicePrincipalId": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADLA_Stg_MachineCycle_servicePrincipalKey')]"
+					},
+					"tenant": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_tenant')]",
+					"subscriptionId": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/StgMachineCycleFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLA_Stg_MachineCycle",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureDataLakeStoreLocation",
+						"fileName": "stgMachineCycles.csv",
+						"folderPath": "ADFDW/Staging"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLA_Stg_MachineCycle')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Stg_Machine')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CycleId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "MachineName",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "StartDateTime",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "EndDateTime",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "LastModified",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "stg",
+					"table": "MachineCycle"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DWLinkedService')]"
 			]
 		}
 	]
