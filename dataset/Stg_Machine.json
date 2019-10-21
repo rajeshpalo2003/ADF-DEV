@@ -1,0 +1,45 @@
+{
+	"name": "Stg_Machine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DWLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CycleId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MachineName",
+				"type": "varchar"
+			},
+			{
+				"name": "CustomerName",
+				"type": "varchar"
+			},
+			{
+				"name": "StartDateTime",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "EndDateTime",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "LastModified",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "MachineCycle"
+		}
+	}
+}

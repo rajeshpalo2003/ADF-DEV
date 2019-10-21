@@ -35,6 +35,119 @@
 					"referenceName": "AzureDataLakeAnalytics1",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Copy_ADLA_StgMachineCycle",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "uspGetMachineCycles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureDataLakeStoreReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"type": "Int32",
+									"ordinal": 1
+								},
+								"sink": {
+									"name": "CycleId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"type": "String",
+									"ordinal": 2
+								},
+								"sink": {
+									"name": "MachineName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"type": "String",
+									"ordinal": 3
+								},
+								"sink": {
+									"name": "CustomerName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"type": "DateTime",
+									"ordinal": 4
+								},
+								"sink": {
+									"name": "StartDateTime",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"type": "DateTime",
+									"ordinal": 5
+								},
+								"sink": {
+									"name": "EndDateTime",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"type": "DateTime",
+									"ordinal": 6
+								},
+								"sink": {
+									"name": "LastModified",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "StgMachineCycleFile",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Stg_Machine",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"folder": {
