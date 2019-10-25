@@ -25,11 +25,11 @@
 						"itemName"
 					],
 					"storeSettings": {
-						"type": "AzureBlobStorageReadSetting",
+						"type": "AzureBlobStorageReadSettings",
 						"recursive": true
 					},
 					"formatSettings": {
-						"type": "DelimitedTextReadSetting"
+						"type": "DelimitedTextReadSettings"
 					}
 				}
 			},
@@ -81,7 +81,7 @@
 								"source": {
 									"type": "DelimitedTextSource",
 									"storeSettings": {
-										"type": "AzureBlobStorageReadSetting",
+										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
 										"wildcardFileName": {
 											"value": "@{concat('First_',formatDateTime(utcnow(),'yyyy'),'*.csv')}",
@@ -94,7 +94,7 @@
 										}
 									},
 									"formatSettings": {
-										"type": "DelimitedTextReadSetting",
+										"type": "DelimitedTextReadSettings",
 										"skipLineCount": 0
 									}
 								},
