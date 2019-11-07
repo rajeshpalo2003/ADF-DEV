@@ -73,7 +73,7 @@
 			}
 		],
 		"typeProperties": {
-			"tableName": "[SalesLT].[Customer]"
+			"tableName": "[dbo].[DimCustomer]"
 		}
 	}
 }
