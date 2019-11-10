@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ADF-INDCENTL-POC-BLOBTOSQL"
 		},
+		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalKey' of 'ADLA_Stg_MachineCycle'"
+		},
 		"AzAdvDBConn_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzAdvDBConn'"
@@ -26,6 +30,10 @@
 		"AzureBlobDeltaFileName_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobDeltaFileName'"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
 		"AzureBlobfailedload_connectionString": {
 			"type": "secureString",
@@ -67,10 +75,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'linkedService1'"
 		},
-		"ADLA_Stg_MachineCycle_servicePrincipalKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'servicePrincipalKey' of 'ADLA_Stg_MachineCycle'"
-		},
 		"Dest_AzureBlob_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -86,6 +90,26 @@
 		"Dest_DS_DimProductCategory_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sbressmessage"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
+		},
+		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
 		},
 		"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
 			"type": "string",
@@ -138,26 +162,6 @@
 		"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
 		},
-		"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
-			"type": "string",
-			"defaultValue": "https://adlsdw.azuredatalakestore.net/webhdfs/v1"
-		},
-		"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "bbfe9984-cb82-4a1a-aada-5a34940576e3"
-		},
-		"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "c96c97cf-4577-46e9-a97e-9910b78ad8e9"
-		},
-		"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
-			"type": "string",
-			"defaultValue": "40066356-3916-4023-abd1-ff0bdef8f880"
-		},
-		"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
-			"type": "string",
-			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -185,6 +189,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ADLA_Stg_MachineCycle_servicePrincipalKey": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_servicePrincipalKey')]"
+					},
 					"AzAdvDBConn_connectionString": {
 						"value": "[parameters('AzAdvDBConn_connectionString')]"
 					},
@@ -199,6 +206,9 @@
 					},
 					"AzureBlobDeltaFileName_connectionString": {
 						"value": "[parameters('AzureBlobDeltaFileName_connectionString')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
 					},
 					"AzureBlobfailedload_connectionString": {
 						"value": "[parameters('AzureBlobfailedload_connectionString')]"
@@ -218,8 +228,20 @@
 					"linkedService1_servicePrincipalKey": {
 						"value": "[parameters('linkedService1_servicePrincipalKey')]"
 					},
-					"ADLA_Stg_MachineCycle_servicePrincipalKey": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_servicePrincipalKey')]"
+					"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_tenant')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId')]"
+					},
+					"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName')]"
 					},
 					"AzureDataLakeAnalytics1_properties_typeProperties_accountName": {
 						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_accountName')]"
@@ -259,21 +281,6 @@
 					},
 					"SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('SSISintegrationRuntime_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
-					},
-					"ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_dataLakeStoreUri')]"
-					},
-					"ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_servicePrincipalId')]"
-					},
-					"ADLA_Stg_MachineCycle_properties_typeProperties_tenant": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_tenant')]"
-					},
-					"ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_subscriptionId')]"
-					},
-					"ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName": {
-						"value": "[parameters('ADLA_Stg_MachineCycle_properties_typeProperties_resourceGroupName')]"
 					}
 				}
 			},
@@ -301,9 +308,6 @@
 					},
 					"Onprem_Advwork_Source_Conn_connectionString": {
 						"value": "[parameters('Onprem_Advwork_Source_Conn_connectionString')]"
-					},
-					"Onprem_Test_Source_Conn_connectionString": {
-						"value": "[parameters('Onprem_Test_Source_Conn_connectionString')]"
 					}
 				}
 			},
@@ -324,6 +328,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Onprem_Test_Source_Conn_connectionString": {
+						"value": "[parameters('Onprem_Test_Source_Conn_connectionString')]"
 					},
 					"Dest_AzureBlob_properties_typeProperties_fileName": {
 						"value": "[parameters('Dest_AzureBlob_properties_typeProperties_fileName')]"
