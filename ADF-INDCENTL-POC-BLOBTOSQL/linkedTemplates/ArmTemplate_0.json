@@ -43,6 +43,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'servicePrincipalKey' of 'AzureDataLakeAnalytics1'"
 		},
+		"CosmosDbMongoDbApi_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDbApi'"
+		},
 		"DWLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
@@ -98,6 +102,10 @@
 		"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
 			"type": "string",
 			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
+		},
+		"CosmosDbMongoDbApi_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "EDW"
 		},
 		"linkedService1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -296,6 +304,20 @@
 					"tenant": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_tenant')]",
 					"subscriptionId": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_subscriptionId')]",
 					"resourceGroupName": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbMongoDbApi')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDbMongoDbApi",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDbMongoDbApi_connectionString')]",
+					"database": "[parameters('CosmosDbMongoDbApi_properties_typeProperties_database')]"
 				}
 			},
 			"dependsOn": []
@@ -686,52 +708,6 @@
 				],
 				"typeProperties": {
 					"tableName": "[[dbo].[DimCustomer]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzAdvDBConn')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzAdv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzAdvDBConn",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ProductCategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ParentProductCategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "SalesLT",
-					"table": "ProductCategory"
 				}
 			},
 			"dependsOn": [

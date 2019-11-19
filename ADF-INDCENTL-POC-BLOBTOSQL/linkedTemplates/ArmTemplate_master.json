@@ -47,6 +47,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Connect_OnPremAdvDW_ToBlob'"
 		},
+		"CosmosDbMongoDbApi_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDbMongoDbApi'"
+		},
 		"DWLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DWLinkedService'"
@@ -130,6 +134,10 @@
 		"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
 			"type": "string",
 			"defaultValue": "RG-INDCENTL-POC-BALLEDW"
+		},
+		"CosmosDbMongoDbApi_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "EDW"
 		},
 		"linkedService1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -216,6 +224,9 @@
 					"AzureDataLakeAnalytics1_servicePrincipalKey": {
 						"value": "[parameters('AzureDataLakeAnalytics1_servicePrincipalKey')]"
 					},
+					"CosmosDbMongoDbApi_connectionString": {
+						"value": "[parameters('CosmosDbMongoDbApi_connectionString')]"
+					},
 					"DWLinkedService_connectionString": {
 						"value": "[parameters('DWLinkedService_connectionString')]"
 					},
@@ -258,6 +269,9 @@
 					"AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName": {
 						"value": "[parameters('AzureDataLakeAnalytics1_properties_typeProperties_resourceGroupName')]"
 					},
+					"CosmosDbMongoDbApi_properties_typeProperties_database": {
+						"value": "[parameters('CosmosDbMongoDbApi_properties_typeProperties_database')]"
+					},
 					"linkedService1_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('linkedService1_properties_typeProperties_dataLakeStoreUri')]"
 					},
@@ -299,15 +313,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"Connect_OnPremAdvDW_ToBlob_connectionString": {
-						"value": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
-					},
-					"Dest_Conn_OnpermSQL_Blob_connectionString": {
-						"value": "[parameters('Dest_Conn_OnpermSQL_Blob_connectionString')]"
-					},
-					"Onprem_Advwork_Source_Conn_connectionString": {
-						"value": "[parameters('Onprem_Advwork_Source_Conn_connectionString')]"
 					}
 				}
 			},
@@ -328,6 +333,15 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Connect_OnPremAdvDW_ToBlob_connectionString": {
+						"value": "[parameters('Connect_OnPremAdvDW_ToBlob_connectionString')]"
+					},
+					"Dest_Conn_OnpermSQL_Blob_connectionString": {
+						"value": "[parameters('Dest_Conn_OnpermSQL_Blob_connectionString')]"
+					},
+					"Onprem_Advwork_Source_Conn_connectionString": {
+						"value": "[parameters('Onprem_Advwork_Source_Conn_connectionString')]"
 					},
 					"Onprem_Test_Source_Conn_connectionString": {
 						"value": "[parameters('Onprem_Test_Source_Conn_connectionString')]"
