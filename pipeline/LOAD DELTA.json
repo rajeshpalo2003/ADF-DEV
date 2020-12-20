@@ -19,7 +19,8 @@
 						"sqlReaderQuery": {
 							"value": "SELECT * from @{pipeline().parameters.ConfigTable}\nIF @@ROWCOUNT = 0 THROW 50000,'ojej...',1",
 							"type": "Expression"
-						}
+						},
+						"partitionOption": "None"
 					},
 					"firstRowOnly": false
 				}
@@ -240,23 +241,28 @@
 							],
 							"typeProperties": {
 								"source": {
-									"type": "RelationalSource",
-									"query": {
-										"value": "SELECT @{item().Cols} FROM @{item().SRC_tab} \n\nWHERE \n\n@{item().WatermarkColumn} > \n'@{item().WatermarkValue}'\nAND\n@{item().WatermarkColumn} <=\n'@{activity('GET MAX PG').output.firstRow.MAXD}'",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"sink": {
-									"type": "SqlSink",
-									"writeBatchSize": 10000,
-									"preCopyScript": {
-										"value": "TRUNCATE TABLE @{item().DST_tab}",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSink"
 								},
 								"enableStaging": false,
 								"dataIntegrationUnits": 0
-							}
+							},
+							"inputs": [
+								{
+									"referenceName": "AzAdv",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AZADV_Customer",
+									"type": "DatasetReference"
+								}
+							]
 						},
 						{
 							"name": "GET MAX PG",
@@ -271,11 +277,13 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "RelationalSource",
-									"query": {
-										"value": "SELECT MAX(@{item().WatermarkColumn}) as maxd FROM @{item().SRC_tab} ",
-										"type": "Expression"
-									}
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "AzAdv",
+									"type": "DatasetReference"
 								}
 							}
 						},
